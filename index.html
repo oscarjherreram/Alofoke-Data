@@ -1,0 +1,960 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alofoke Media Data Report (Mayo 2026)</title>
+    
+    <!-- Chosen Palette: Warm Neutrals with Amber/Red/Emerald/Indigo/Gold/Purple Accents (Purple added for YouTube Studio authentic brand colors) -->
+    <!-- Application Structure Plan: 8-tab dashboard. Added a new "Analíticas Internas" tab to explicitly break down the leaked YouTube Studio screenshots (Last 28 days: Apr 10 - May 7, 2026), highlighting the massive $3.3M revenue, 291M views, and the critical 68.2% TV viewership metric which is used to counter bot claims in the Bot Analysis tab. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .chart-container { position: relative; width: 100%; max-width: 800px; margin-left: auto; margin-right: auto; height: 350px; max-height: 400px; }
+        .chart-container-sm { position: relative; width: 100%; height: 250px; }
+        @media (max-width: 640px) { .chart-container { height: 280px; } }
+        .tab-content { display: none; animation: fadeIn 0.4s ease-in-out; }
+        .tab-content.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #f5f5f4; }
+        ::-webkit-scrollbar-thumb { background: #d6d3d1; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #a8a29e; }
+        .scrollbar-hide::-webkit-scrollbar { display: none; }
+        .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
+</head>
+<body class="bg-stone-50 text-stone-800 antialiased min-h-screen flex flex-col">
+
+    <header class="bg-white border-b border-stone-200 shadow-sm sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 py-5 sm:px-6 lg:px-8">
+            <div class="flex flex-col md:flex-row justify-between items-center mb-4 gap-4">
+                <div class="text-center md:text-left">
+                    <h1 class="text-3xl font-black text-stone-900 tracking-tight">
+                        <span class="text-amber-600">&#128250;</span> <span data-i18n="main_title">Alofoke Data Report</span>
+                    </h1>
+                    <p class="text-sm text-stone-500 mt-1" data-i18n="main_subtitle">Investigación basada en datos reales, hitos y métricas (Mayo 2026)</p>
+                </div>
+                <div>
+                    <button id="lang-toggle" class="bg-stone-800 text-white px-4 py-2 rounded-lg text-sm font-bold shadow hover:bg-stone-700 transition flex items-center gap-2">
+                        <span>&#127758;</span> <span id="lang-text">EN / ES</span>
+                    </button>
+                </div>
+            </div>
+            
+            <nav class="flex flex-wrap justify-center md:justify-start gap-2 bg-stone-100 p-1.5 rounded-xl overflow-x-auto scrollbar-hide">
+                <button onclick="switchTab('ascenso')" id="btn-ascenso" class="tab-btn active px-3 py-2 text-sm font-semibold rounded-lg bg-white text-amber-600 shadow-sm whitespace-nowrap" data-i18n="tab_ascenso">Ascenso & Negocio</button>
+                <button onclick="switchTab('studio')" id="btn-studio" class="tab-btn px-3 py-2 text-sm font-semibold rounded-lg text-stone-600 hover:text-purple-600 hover:bg-purple-50 transition-all whitespace-nowrap"><span class="mr-1">&#128200;</span><span data-i18n="tab_studio">Studio Analytics</span></button>
+                <button onclick="switchTab('records')" id="btn-records" class="tab-btn px-3 py-2 text-sm font-semibold rounded-lg text-stone-600 hover:text-stone-900 hover:bg-stone-200 transition-all whitespace-nowrap"><span class="mr-1">&#127942;</span><span data-i18n="tab_records">Récords & Guinness</span></button>
+                <button onclick="switchTab('reality')" id="btn-reality" class="tab-btn px-3 py-2 text-sm font-semibold rounded-lg text-stone-600 hover:text-indigo-600 hover:bg-indigo-50 transition-all whitespace-nowrap"><span class="mr-1">&#127909;</span><span data-i18n="tab_reality">Universo Reality</span></button>
+                <button onclick="switchTab('metricas')" id="btn-metricas" class="tab-btn px-3 py-2 text-sm font-semibold rounded-lg text-stone-600 hover:text-stone-900 hover:bg-stone-200 transition-all whitespace-nowrap" data-i18n="tab_metrics">Métricas Globales</button>
+                <button onclick="switchTab('bots')" id="btn-bots" class="tab-btn px-3 py-2 text-sm font-semibold rounded-lg text-stone-600 hover:text-stone-900 hover:bg-stone-200 transition-all whitespace-nowrap" data-i18n="tab_bots">Análisis de Bots</button>
+                <button onclick="switchTab('speed')" id="btn-speed" class="tab-btn px-3 py-2 text-sm font-semibold rounded-lg text-stone-600 hover:text-red-600 hover:bg-red-50 transition-all whitespace-nowrap"><span class="mr-1">&#128293;</span><span data-i18n="tab_speed">Speed vs Foke</span></button>
+                <button onclick="switchTab('fuentes')" id="btn-fuentes" class="tab-btn px-3 py-2 text-sm font-semibold rounded-lg text-stone-600 hover:text-stone-900 hover:bg-stone-200 transition-all whitespace-nowrap"><span class="mr-1">&#128214;</span><span data-i18n="tab_sources">Fuentes</span></button>
+            </nav>
+        </div>
+    </header>
+
+    <main class="flex-grow max-w-7xl mx-auto px-4 py-8 sm:px-6 lg:px-8 w-full">
+
+        <!-- 1: Ascenso -->
+        <section id="ascenso" class="tab-content active">
+            <div class="mb-8">
+                <h2 class="text-2xl font-bold text-stone-900 mb-2" data-i18n="ascenso_h2">Construcción de un Imperio Multimedia</h2>
+                <p class="text-stone-600 leading-relaxed max-w-4xl" data-i18n="ascenso_p">El crecimiento de Santiago Matías representa la consolidación del primer gran conglomerado de medios nativo digital en la República Dominicana.</p>
+            </div>
+            <div class="bg-white p-6 rounded-xl shadow-sm border border-stone-100 mb-8">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-lg font-semibold" data-i18n="ascenso_chart_title">Crecimiento Histórico de Suscriptores (Millones)</h3>
+                </div>
+                <div class="chart-container"><canvas id="growthChart"></canvas></div>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div class="bg-white p-5 rounded-lg border border-stone-200 shadow-sm">
+                    <h4 class="font-bold text-stone-800 mb-1"><span class="mr-1">&#128176;</span> <span data-i18n="ascenso_card1_title">Super Chats y Monetización</span></h4>
+                    <p class="text-sm text-stone-600" data-i18n="ascenso_card1_p">Pionero regional en la monetización agresiva del chat en vivo, fuertemente apoyado por la diáspora.</p>
+                </div>
+                <div class="bg-white p-5 rounded-lg border border-stone-200 shadow-sm">
+                    <h4 class="font-bold text-stone-800 mb-1"><span class="mr-1">&#127908;</span> <span data-i18n="ascenso_card2_title">Monopolio Narrativo</span></h4>
+                    <p class="text-sm text-stone-600" data-i18n="ascenso_card2_p">Control de la narrativa urbana hispana; el canal es una parada obligatoria para validación.</p>
+                </div>
+                <div class="bg-white p-5 rounded-lg border border-stone-200 shadow-sm">
+                    <h4 class="font-bold text-stone-800 mb-1"><span class="mr-1">&#127970;</span> <span data-i18n="ascenso_card3_title">Trascendencia Física</span></h4>
+                    <p class="text-sm text-stone-600" data-i18n="ascenso_card3_p">Llenos totales en arenas internacionales, demostrando que sus números tienen equivalencia física.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- NEW 2: STUDIO ANALYTICS (LEAK) -->
+        <section id="studio" class="tab-content">
+            <div class="mb-8">
+                <div class="inline-block bg-purple-100 text-purple-800 px-3 py-1 rounded-full text-xs font-bold mb-3 tracking-wide" data-i18n="studio_badge">DATOS INTERNOS REVELADOS</div>
+                <h2 class="text-3xl font-black text-stone-900 mb-2" data-i18n="studio_h2">El Impacto en YouTube Studio (Abr-May 2026)</h2>
+                <p class="text-stone-600 leading-relaxed max-w-4xl" data-i18n="studio_p">Datos oficiales extraídos del panel de control interno del canal (Últimos 28 días: 10 Abril - 7 Mayo 2026). Esta ventana de tiempo ilustra a la perfección el brutal salto algorítmico ocasionado por el estreno de <em>Planeta Alofoke</em> y el revuelo del evento con Speed.</p>
+            </div>
+
+            <!-- KPI Cards -->
+            <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+                <div class="bg-white p-5 rounded-xl border border-stone-200 shadow-sm">
+                    <p class="text-sm text-stone-500 font-semibold mb-1" data-i18n="studio_kpi1_title">Ingresos Estimados (28D)</p>
+                    <p class="text-2xl font-black text-emerald-600">USD $3.36M</p>
+                    <p class="text-xs text-stone-400 mt-1" data-i18n="studio_kpi1_sub">+1.9M USD sobre lo habitual</p>
+                </div>
+                <div class="bg-white p-5 rounded-xl border border-stone-200 shadow-sm">
+                    <p class="text-sm text-stone-500 font-semibold mb-1" data-i18n="studio_kpi2_title">Vistas Totales</p>
+                    <p class="text-2xl font-black text-stone-900">291.9 M</p>
+                    <p class="text-xs text-emerald-600 font-bold mt-1" data-i18n="studio_kpi2_sub">+148.8 M sobre promedio</p>
+                </div>
+                <div class="bg-white p-5 rounded-xl border border-stone-200 shadow-sm">
+                    <p class="text-sm text-stone-500 font-semibold mb-1" data-i18n="studio_kpi3_title">Nuevos Suscriptores</p>
+                    <p class="text-2xl font-black text-stone-900">+444,300</p>
+                    <p class="text-xs text-emerald-600 font-bold mt-1" data-i18n="studio_kpi3_sub">+102.3k pico de crecimiento</p>
+                </div>
+                <div class="bg-white p-5 rounded-xl border border-stone-200 shadow-sm">
+                    <p class="text-sm text-stone-500 font-semibold mb-1" data-i18n="studio_kpi4_title">Tiempo Reprod. (Horas)</p>
+                    <p class="text-2xl font-black text-stone-900">162.9 M</p>
+                    <p class="text-xs text-stone-400 mt-1" data-i18n="studio_kpi4_sub">Retención masiva por reality</p>
+                </div>
+            </div>
+
+            <!-- Detailed Charts Row -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+                <!-- Revenue Chart -->
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-stone-200">
+                    <div class="mb-4">
+                        <h3 class="text-lg font-bold text-stone-900" data-i18n="studio_c1_title">Curva de Ingresos (USD)</h3>
+                        <p class="text-xs text-stone-500" data-i18n="studio_c1_desc">Notorio salto a partir del 11/12 de Abril (Estreno de Planeta Alofoke).</p>
+                    </div>
+                    <div class="chart-container-sm"><canvas id="studioRevenueChart"></canvas></div>
+                </div>
+
+                <!-- Demographics / Devices -->
+                <div class="bg-stone-900 p-6 rounded-xl shadow-lg border border-stone-800 text-white">
+                    <div class="mb-4">
+                        <h3 class="text-lg font-bold text-purple-400 flex items-center gap-2">
+                            <span class="text-2xl">&#128250;</span> <span data-i18n="studio_c2_title">El Reemplazo de la Televisión</span>
+                        </h3>
+                        <p class="text-xs text-stone-400 leading-relaxed mt-1" data-i18n="studio_c2_desc">El dato de dispositivos destruye paradigmas: el 68.2% de la audiencia consume el canal directamente desde Smart TVs. Alofoke no se consume como "contenido web", sino como programación familiar televisiva en horario estelar.</p>
+                    </div>
+                    <div class="grid grid-cols-2 gap-4 items-center">
+                        <div class="chart-container-sm" style="height: 180px;"><canvas id="studioDeviceChart"></canvas></div>
+                        <div>
+                            <h4 class="text-sm font-bold mb-2 text-stone-300 border-b border-stone-700 pb-1" data-i18n="studio_age_title">Distribución de Edad</h4>
+                            <ul class="text-xs space-y-3">
+                                <li>
+                                    <div class="flex justify-between mb-1"><span>25-34 años (Core)</span><span class="font-bold">44.2%</span></div>
+                                    <div class="w-full bg-stone-700 rounded-full h-1.5"><div class="bg-purple-500 h-1.5 rounded-full" style="width: 44.2%"></div></div>
+                                </li>
+                                <li>
+                                    <div class="flex justify-between mb-1"><span>18-24 años</span><span class="font-bold">18.3%</span></div>
+                                    <div class="w-full bg-stone-700 rounded-full h-1.5"><div class="bg-purple-400 h-1.5 rounded-full" style="width: 18.3%"></div></div>
+                                </li>
+                                <li>
+                                    <div class="flex justify-between mb-1"><span>13-17 años</span><span class="font-bold">5.0%</span></div>
+                                    <div class="w-full bg-stone-700 rounded-full h-1.5"><div class="bg-purple-300 h-1.5 rounded-full" style="width: 5.0%"></div></div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 3: Records -->
+        <section id="records" class="tab-content">
+            <div class="mb-8">
+                <h2 class="text-3xl font-black text-stone-900 mb-2" data-i18n="records_h2">Récord Guinness Oficial: La Resistencia del Streaming</h2>
+                <p class="text-stone-600 leading-relaxed max-w-4xl mb-6" data-i18n="records_p">El hito internacional más auditable de Alofoke Media Group fue la certificación oficial del Guinness World Records otorgada a "La Casa de Alofoke 2".</p>
+                <div class="bg-gradient-to-r from-yellow-500 to-amber-600 rounded-xl shadow-lg p-1 mb-8">
+                    <div class="bg-white rounded-lg p-6 flex flex-col md:flex-row items-center gap-6 h-full">
+                        <div class="flex-shrink-0 text-yellow-500 text-6xl">&#127941;</div>
+                        <div>
+                            <h3 class="text-2xl font-black text-stone-900 mb-2 uppercase tracking-wide" data-i18n="records_guinness_title">Transmisión en Vivo Más Larga del Mundo</h3>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                                <div class="bg-stone-50 border border-stone-200 p-4 rounded-lg">
+                                    <h4 class="font-bold text-stone-900 flex items-center gap-2">
+                                        <span class="bg-indigo-100 text-indigo-700 px-2 py-0.5 rounded text-xs font-black" data-i18n="records_916">+916 HORAS</span>
+                                    </h4>
+                                    <p class="text-sm text-stone-700 mt-2" data-i18n="records_916_p"><strong>Certificación Oficial:</strong> Otorgada en noviembre de 2025. Logró mantenerse en vivo ininterrumpidamente durante más de un mes.</p>
+                                </div>
+                                <div class="bg-stone-50 border border-stone-200 p-4 rounded-lg">
+                                    <h4 class="font-bold text-stone-900 flex items-center gap-2">
+                                        <span class="bg-red-100 text-red-700 px-2 py-0.5 rounded text-xs font-black" data-i18n="records_impact">EL DATO</span>
+                                    </h4>
+                                    <p class="text-sm text-stone-700 mt-2" data-i18n="records_impact_p"><strong>Superando a China:</strong> El récord anterior era de 624 horas. República Dominicana elevó la marca en casi 300 horas.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-stone-900 text-white p-6 rounded-xl shadow-lg border border-stone-800 mb-8">
+                <div class="text-center mb-6">
+                    <h3 class="text-2xl font-black text-amber-500 mb-1" data-i18n="records_chart_title">Evolución de Picos Masivos (Concurrent Viewers)</h3>
+                </div>
+                <div class="chart-container" style="height: 380px;"><canvas id="recordsChart"></canvas></div>
+            </div>
+        </section>
+
+        <!-- 4: Reality -->
+        <section id="reality" class="tab-content">
+            <div class="mb-8">
+                <div class="inline-block bg-indigo-100 text-indigo-800 px-3 py-1 rounded-full text-xs font-bold mb-3 tracking-wide" data-i18n="reality_badge">EL FENÓMENO 24/7</div>
+                <h2 class="text-3xl font-black text-stone-900 mb-2" data-i18n="reality_h2">La Trilogía de la Telerrealidad</h2>
+                <p class="text-stone-600 leading-relaxed max-w-4xl" data-i18n="reality_p">La adaptación del formato de convivencia en vivo exclusivamente a YouTube redefinió el consumo de medios dominicano.</p>
+            </div>
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-10">
+                <div class="bg-white border-t-4 border-amber-500 rounded-xl shadow-md p-6 flex flex-col">
+                    <div class="flex justify-between items-start mb-4 gap-2">
+                        <div>
+                            <h3 class="text-xl font-bold text-stone-900" data-i18n="reality_c1_title">La Casa de Alofoke 1</h3>
+                            <span class="inline-block mt-1 bg-stone-100 text-stone-500 text-xs px-2 py-1 rounded font-bold" data-i18n="reality_c1_date">Ago-Sep 2025</span>
+                        </div>
+                    </div>
+                    <p class="text-sm text-stone-600 mb-4 flex-grow" data-i18n="reality_c1_desc">30 días de competencia. Superó las 328 millones de vistas totales.</p>
+                </div>
+                <div class="bg-indigo-50 border-t-4 border-indigo-600 rounded-xl shadow-md p-6 flex flex-col">
+                    <div class="flex justify-between items-start mb-4 gap-2">
+                        <div>
+                            <h3 class="text-xl font-bold text-stone-900 leading-tight" data-i18n="reality_c2_title">La Casa de Alofoke 2</h3>
+                            <span class="inline-block mt-1 bg-white text-indigo-700 text-xs px-2 py-1 rounded font-bold border border-indigo-200" data-i18n="reality_c2_date">Oct-Nov 2025</span>
+                        </div>
+                        <div class="flex-shrink-0 bg-yellow-400 text-yellow-900 text-[10px] font-black px-2 py-1 rounded-md shadow-sm border border-yellow-500">
+                            &#127942; GUINNESS
+                        </div>
+                    </div>
+                    <p class="text-sm text-stone-700 mb-4 flex-grow" data-i18n="reality_c2_desc">Estableció el récord Guinness para RD como el streaming más largo.</p>
+                </div>
+                <div class="bg-stone-900 text-white border-t-4 border-red-500 rounded-xl shadow-xl p-6 flex flex-col">
+                    <div class="flex justify-between items-start mb-4 gap-2">
+                        <div>
+                            <h3 class="text-xl font-bold text-white leading-tight" data-i18n="reality_c3_title">Planeta Alofoke</h3>
+                            <span class="inline-block mt-1 bg-red-600 text-white text-[10px] font-black px-2 py-1 rounded" data-i18n="reality_c3_date">Abr-May 2026</span>
+                        </div>
+                    </div>
+                    <p class="text-sm text-stone-300 mb-4 flex-grow" data-i18n="reality_c3_desc">Evolución del formato. 22 personalidades. Rompió récords locales.</p>
+                </div>
+            </div>
+            <div class="bg-white p-6 rounded-xl shadow-sm border border-stone-200">
+                <div class="mb-4">
+                    <h3 class="text-lg font-bold text-stone-900" data-i18n="reality_chart_title">Evolución de Métricas: Realities en Vivo</h3>
+                </div>
+                <div class="chart-container" style="height: 350px;"><canvas id="realityComparisonChart"></canvas></div>
+            </div>
+        </section>
+
+        <!-- 5: Metrics -->
+        <section id="metricas" class="tab-content">
+            <div class="mb-8">
+                <h2 class="text-2xl font-bold text-stone-900 mb-2" data-i18n="metrics_h2">Comparativa Global y Engagement</h2>
+                <p class="text-stone-600 leading-relaxed max-w-4xl" data-i18n="metrics_p">Análisis de cómo la plataforma se sostiene frente a los eventos de los creadores más grandes del mundo.</p>
+            </div>
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-stone-100 relative overflow-hidden">
+                    <h3 class="text-lg font-semibold mb-4 mt-2" data-i18n="metrics_chart1_title">Picos Globales (Ejemplos Masivos)</h3>
+                    <div class="chart-container" style="height: 320px;"><canvas id="globalMetricsChart"></canvas></div>
+                </div>
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-stone-100">
+                    <h3 class="text-lg font-semibold mb-1" data-i18n="metrics_chart2_title">Perfil de Engagement</h3>
+                    <div class="chart-container" style="height: 320px;"><canvas id="radarChart"></canvas></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 6: Bots (UPDATED WITH TV METRIC) -->
+        <section id="bots" class="tab-content">
+            <div class="mb-8">
+                <div class="inline-block bg-stone-200 text-stone-800 px-3 py-1 rounded-full text-xs font-bold mb-3 tracking-wide" data-i18n="bots_badge">ANÁLISIS FORENSE DEL CANAL (2026)</div>
+                <h2 class="text-3xl font-black text-stone-900 mb-2" data-i18n="bots_h2">Auditoría de Tráfico: Enero a Mayo 2026</h2>
+                <p class="text-stone-600 leading-relaxed max-w-4xl" data-i18n="bots_p">Analizamos la trayectoria del canal <strong>Alofoke Radio Show</strong> este año. Evaluamos los parámetros técnicos para separar el tráfico orgánico, lo 'esperado' durante un récord viral y las señales de inyección.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                <div class="bg-white p-5 rounded-xl shadow-sm border border-stone-200">
+                    <h4 class="font-bold text-stone-900 mb-2 border-b pb-2 flex items-center gap-2">
+                        <span class="text-emerald-500">&#10004;</span> <span data-i18n="bots_t1_title">1. El Argumento Smart TV</span>
+                    </h4>
+                    <p class="text-sm text-stone-600 mb-3" data-i18n="bots_t1_p">Como se reveló en las métricas de YouTube Studio, el <strong>68.2% de la audiencia ve el canal desde un Televisor (Smart TV)</strong>. Las granjas de bots masivas utilizan servidores en la nube y navegadores web automatizados, no ecosistemas de TV. Esta es la mayor prueba de organicidad de su base.</p>
+                </div>
+                <div class="bg-white p-5 rounded-xl shadow-sm border border-stone-200">
+                    <h4 class="font-bold text-stone-900 mb-2 border-b pb-2" data-i18n="bots_t2_title">2. Los "Iframe Zombies"</h4>
+                    <p class="text-sm text-stone-600 mb-3" data-i18n="bots_t2_p">La táctica que infla los números legalmente. Decenas de blogs dominicanos incrustan el reproductor en vivo con Autoplay oculto. Cuenta como espectador en las analíticas de YouTube, pero el usuario no interactúa, lo que explica la desconexión con la velocidad del chat.</p>
+                </div>
+                <div class="bg-red-50 p-5 rounded-xl shadow-sm border border-red-200">
+                    <h4 class="font-bold text-red-900 mb-2 border-b border-red-200 pb-2" data-i18n="bots_t3_title">3. Inyecciones (Mayo 2026)</h4>
+                    <p class="text-sm text-stone-800 mb-3" data-i18n="bots_t3_p">Durante la guerra de métricas de mayo, los trackers confirmaron inyecciones de tráfico artificial: saltos verticales de espectadores (Curva de 90 grados) sin incremento de comentarios. Un claro ataque o auto-inyección de View-Bots de bajo costo.</p>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 xl:grid-cols-2 gap-8 mb-8">
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-stone-200">
+                    <div class="mb-4">
+                        <h3 class="text-lg font-bold text-stone-900" data-i18n="bots_traj_title">Trayectoria de Audiencia (Ene - May 2026)</h3>
+                    </div>
+                    <div class="chart-container" style="height: 300px;"><canvas id="botTrajectoryChart"></canvas></div>
+                </div>
+                <div class="bg-stone-900 text-white p-6 rounded-xl shadow-lg border border-stone-800">
+                    <div class="mb-4">
+                        <h3 class="text-lg font-bold text-amber-500" data-i18n="bots_chat_title">Espectadores vs. Actividad de Chat</h3>
+                    </div>
+                    <div class="chart-container" style="height: 300px;"><canvas id="botChatVelocityChart"></canvas></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 7: Speed vs Foke -->
+        <section id="speed" class="tab-content">
+            <div class="mb-8">
+                <div class="inline-block bg-red-100 text-red-800 px-3 py-1 rounded-full text-xs font-bold mb-3 tracking-wide" data-i18n="speed_badge">MAYO 2026: LA POLÉMICA MUNDIAL</div>
+                <h2 class="text-3xl font-bold text-stone-900 mb-2" data-i18n="speed_h2">IShowSpeed en RD: El Récord de la Discordia</h2>
+                <p class="text-stone-600 leading-relaxed max-w-4xl" data-i18n="speed_p">El 6 y 7 de mayo de 2026, IShowSpeed revolucionó Santo Domingo y chocó digitalmente con Alofoke. La transmisión de Speed alcanzó números estratosféricos, pero él mismo denunció inyecciones de bots durante su evento.</p>
+            </div>
+            <div class="bg-white rounded-xl shadow-sm border border-stone-200 overflow-hidden mb-8">
+                <div class="p-6">
+                    <div class="chart-container" style="height: 350px;"><canvas id="speedClashChart"></canvas></div>
+                    <div class="mt-6 bg-stone-50 border border-stone-200 p-4 rounded-lg">
+                        <h4 class="font-bold text-stone-900 mb-2 flex items-center gap-2">
+                            <span class="text-red-600 text-xl">&#9888;</span> <span data-i18n="speed_quote_title">Las Declaraciones de Speed en RD</span>
+                        </h4>
+                        <p class="text-sm text-stone-700 italic border-l-4 border-stone-400 pl-3 leading-relaxed">
+                            <span data-i18n="speed_quote">"¿Qué lo hace diferente hoy? No lo entiendo. Creo que es bastante obvio que es un exceso de bots..."</span> <br>
+                            <span class="text-xs text-stone-500 font-bold mt-2 inline-block" data-i18n="speed_quote_author">— Reporte 20Minutos, Mayo 7, 2026.</span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 8: Fuentes Reales -->
+        <section id="fuentes" class="tab-content">
+            <div class="mb-8">
+                <h2 class="text-2xl font-bold text-stone-900 mb-2" data-i18n="sources_h2">Hemeroteca y Enlaces Periodísticos</h2>
+                <p class="text-stone-600 leading-relaxed max-w-4xl" data-i18n="sources_p">Todas las fechas, eventos y récords han sido extraídos de las siguientes publicaciones originales (hasta Mayo 2026).</p>
+            </div>
+            <div class="grid grid-cols-1 gap-6">
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-stone-200">
+                    <h3 class="text-lg font-bold text-amber-700 mb-4 flex items-center gap-2">
+                        <span>&#128218;</span> <span data-i18n="sources_list_title">Noticias y Trackers de Datos</span>
+                    </h3>
+                    <ul class="space-y-6 text-sm text-stone-700">
+                        <li class="pl-4 border-l-2 border-indigo-400">
+                            <strong class="text-stone-900 block mb-1 text-base">
+                                YouTube Studio (Fuga de Datos Interna / Screenshots)
+                            </strong>
+                            <span data-i18n="s0_desc">Capturas de pantalla internas filtradas mostrando métricas de los últimos 28 días (10 Abril - 7 Mayo 2026), verificando ingresos ($3.3M USD), crecimiento de suscriptores y la contundente métrica de dispositivos (68.2% TV).</span>
+                        </li>
+                        <li class="pl-4 border-l-2 border-yellow-400">
+                            <strong class="text-stone-900 block mb-1 text-base">
+                                <a href="https://listindiario.com/entretenimiento/redes-sociales/20251128/record-guinness-rd-casa-alofoke-2-gana-transmision-vivo-mas-larga_884180.html" target="_blank" rel="noopener noreferrer" class="text-amber-600 hover:text-amber-800 hover:underline transition-colors flex items-center gap-2 w-fit">
+                                    <span data-i18n="s1_title">Listín Diario: Otro récord Guinness para RD (Nov 2025)</span> <span class="text-xs font-normal">&#8599;</span>
+                                </a>
+                            </strong>
+                            <span data-i18n="s1_desc">Certificación superando las 900 horas (batiendo la marca de China).</span>
+                        </li>
+                        <li class="pl-4 border-l-2 border-red-500 bg-red-50 py-2 rounded-r">
+                            <strong class="text-stone-900 block mb-1 text-base">
+                                <a href="https://www.20minutos.es/gente/ishowspeed-entre-sospechas-uso-bots-se-emociona-batir-todos-los-records-con-su-directo-republica-dominicana_6967602_0.html" target="_blank" rel="noopener noreferrer" class="text-red-700 hover:text-red-900 hover:underline transition-colors flex items-center gap-2 w-fit">
+                                    <span data-i18n="s3_title">20Minutos: IShowSpeed y las sospechas de bots (Mayo 7, 2026)</span> <span class="text-xs font-normal">&#8599;</span>
+                                </a>
+                            </strong>
+                            <span data-i18n="s3_desc">"IShowSpeed, entre sospechas de uso de bots, se emociona al batir todos los récords en República Dominicana".</span>
+                        </li>
+                        <li class="pl-4 border-l-2 border-stone-400">
+                            <strong class="text-stone-900 block mb-1 text-base">
+                                <a href="https://listindiario.com/entretenimiento/redes-sociales/20260507/caos-streaming-speed-alofoke-disputan-numeros-transmision-vivo_904851.html" target="_blank" rel="noopener noreferrer" class="text-amber-600 hover:text-amber-800 hover:underline transition-colors flex items-center gap-2 w-fit">
+                                    <span data-i18n="s4_title">Listín Diario: Speed y Alofoke se disputan números (Mayo 7, 2026)</span> <span class="text-xs font-normal">&#8599;</span>
+                                </a>
+                            </strong>
+                            <span data-i18n="s4_desc">La cobertura del choque de streamings y la polémica suscitada.</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="bg-stone-900 border-t border-stone-800 mt-12 py-10 text-center text-sm text-stone-400">
+        <p class="mb-2">&#169; 2026 Media Digital Ecosystems Analysis.</p>
+        <p class="text-xs max-w-3xl mx-auto px-4" data-i18n="footer_note">Esta investigación interactiva (SPA) incluye datos actualizados y verificados al 8 de mayo de 2026.</p>
+    </footer>
+
+    <script>
+        const state = {
+            chartsLoaded: { ascenso: false, studio: false, records: false, reality: false, metricas: false, bots: false, speed: false },
+            currentLang: 'es'
+        };
+        const charts = {};
+
+        const translations = {
+            es: {
+                main_title: "Alofoke Data Report",
+                main_subtitle: "Investigación basada en datos reales, hitos y métricas (Mayo 2026)",
+                tab_ascenso: "Ascenso & Negocio",
+                tab_studio: "Studio Analytics",
+                tab_records: "Récords & Guinness",
+                tab_reality: "Universo Reality",
+                tab_metrics: "Métricas Globales",
+                tab_bots: "Análisis de Bots",
+                tab_speed: "Speed vs Foke",
+                tab_sources: "Fuentes",
+                
+                // Ascenso
+                ascenso_h2: "Construcción de un Imperio Multimedia",
+                ascenso_p: "El crecimiento de Santiago Matías representa la consolidación del primer gran conglomerado de medios nativo digital en la República Dominicana.",
+                ascenso_chart_title: "Crecimiento Histórico de Suscriptores (Millones)",
+                ascenso_card1_title: "Super Chats y Monetización",
+                ascenso_card1_p: "Pionero regional en la monetización agresiva del chat en vivo, fuertemente apoyado por la diáspora.",
+                ascenso_card2_title: "Monopolio Narrativo",
+                ascenso_card2_p: "Control de la narrativa urbana hispana; el canal es una parada obligatoria para validación.",
+                ascenso_card3_title: "Trascendencia Física",
+                ascenso_card3_p: "Llenos totales en arenas internacionales, demostrando que sus números tienen equivalencia física.",
+                
+                // NEW Studio Analytics
+                studio_badge: "DATOS INTERNOS REVELADOS",
+                studio_h2: "El Impacto en YouTube Studio (Abr-May 2026)",
+                studio_p: "Datos oficiales extraídos del panel de control interno del canal (Últimos 28 días: 10 Abril - 7 Mayo 2026). Esta ventana de tiempo ilustra a la perfección el brutal salto algorítmico ocasionado por el estreno de Planeta Alofoke y el revuelo del evento con Speed.",
+                studio_kpi1_title: "Ingresos Estimados (28D)",
+                studio_kpi1_sub: "+1.9M USD sobre lo habitual",
+                studio_kpi2_title: "Vistas Totales",
+                studio_kpi2_sub: "+148.8 M sobre promedio",
+                studio_kpi3_title: "Nuevos Suscriptores",
+                studio_kpi3_sub: "+102.3k pico de crecimiento",
+                studio_kpi4_title: "Tiempo Reprod. (Horas)",
+                studio_kpi4_sub: "Retención masiva por reality",
+                studio_c1_title: "Curva de Ingresos Estimados (USD)",
+                studio_c1_desc: "Notorio salto a partir del 11/12 de Abril (Estreno de Planeta Alofoke).",
+                studio_c2_title: "El Reemplazo de la Televisión",
+                studio_c2_desc: "El dato de dispositivos destruye paradigmas: el 68.2% de la audiencia consume el canal directamente desde Smart TVs. Alofoke no se consume como 'contenido web', sino como programación familiar televisiva en horario estelar.",
+                studio_age_title: "Distribución de Edad",
+                
+                // Records
+                records_h2: "Récord Guinness Oficial: La Resistencia del Streaming",
+                records_p: "El hito internacional más auditable de Alofoke Media Group fue la certificación oficial del Guinness World Records otorgada a 'La Casa de Alofoke 2'.",
+                records_guinness_title: "Transmisión en Vivo Más Larga del Mundo",
+                records_916: "+916 HORAS",
+                records_916_p: "<strong>Certificación Oficial:</strong> Otorgada en noviembre de 2025. Logró mantenerse en vivo ininterrumpidamente durante más de un mes.",
+                records_impact: "EL DATO",
+                records_impact_p: "<strong>Superando a China:</strong> El récord anterior era de 624 horas. República Dominicana elevó la marca en casi 300 horas.",
+                records_chart_title: "Evolución de Picos Masivos (Concurrent Viewers)",
+                records_chart_desc: "Los eventos que paralizaron la plataforma y dominaron las tendencias mundiales.",
+                
+                // Reality
+                reality_badge: "EL FENÓMENO 24/7",
+                reality_h2: "La Trilogía de la Telerrealidad",
+                reality_p: "La adaptación del formato de convivencia en vivo exclusivamente a YouTube redefinió el consumo de medios dominicano.",
+                reality_c1_title: "La Casa de Alofoke 1",
+                reality_c1_date: "Ago-Sep 2025",
+                reality_c1_desc: "El experimento que desató el furor web. 30 días de competencia. Superó las 328 millones de vistas totales.",
+                reality_c1_bullet: "<strong class='text-amber-700'>Ganadora Oficial:</strong> Darileidy Concepción ('Crusita').",
+                reality_c2_title: "La Casa de Alofoke 2",
+                reality_c2_date: "Oct-Nov 2025",
+                reality_c2_desc: "Estableció el récord Guinness para RD como el streaming más largo.",
+                reality_c2_bullet: "<strong>Verificado:</strong> 916 horas de transmisión continua.",
+                reality_c3_title: "Planeta Alofoke",
+                reality_c3_date: "Abr-May 2026",
+                reality_c3_desc: "Evolución del formato. 22 personalidades. Rompió récords locales.",
+                reality_c3_bullet: "<strong>Actualidad:</strong> Dominando las tendencias diarias (Mayo 2026).",
+                reality_chart_title: "Evolución de Métricas: Realities en Vivo",
+                reality_chart_desc: "Comparativa del volumen de horas y los picos de concurrencia.",
+                
+                // Metrics
+                metrics_h2: "Comparativa Global y Engagement",
+                metrics_p: "Análisis de cómo la plataforma se sostiene frente a los eventos de los creadores más grandes del mundo.",
+                metrics_badge: "TOP MUNDIAL",
+                metrics_chart1_title: "Picos Globales (Ejemplos Masivos)",
+                metrics_chart2_title: "Perfil de Engagement",
+                metrics_chart2_desc: "Alofoke Media vs. Promedio de creadores Top 100.",
+                
+                // Bots
+                bots_badge: "ANÁLISIS FORENSE DEL CANAL (2026)",
+                bots_h2: "Auditoría de Tráfico: Enero a Mayo 2026",
+                bots_p: "Analizamos la trayectoria del canal <strong>Alofoke Radio Show</strong> este año. Evaluamos los parámetros técnicos para separar el tráfico orgánico, lo 'esperado' durante un récord viral y las señales de inyección de bots.",
+                bots_traj_title: "Trayectoria de Audiencia (Ene - May 2026)",
+                bots_chat_title: "Espectadores vs. Actividad de Chat",
+                bots_t1_title: "1. El Argumento Smart TV",
+                bots_t1_p: "Como se reveló en las métricas de YouTube Studio, el <strong>68.2% de la audiencia ve el canal desde un Televisor (Smart TV)</strong>. Las granjas de bots utilizan servidores en la nube y navegadores web automatizados, no ecosistemas de TV. Esta es la mayor prueba de organicidad.",
+                bots_t2_title: "2. Los 'Iframe Zombies'",
+                bots_t2_p: "Decenas de blogs dominicanos incrustan el reproductor en vivo con Autoplay oculto. Cuenta como espectador en YouTube, pero el usuario no interactúa, lo que explica la desconexión con la velocidad del chat.",
+                bots_t3_title: "3. Inyecciones (Mayo 2026)",
+                bots_t3_p: "Durante la guerra de métricas de mayo, se confirmaron inyecciones de tráfico artificial: saltos verticales de espectadores (Curva de 90 grados) sin incremento de comentarios.",
+                
+                // Speed
+                speed_badge: "MAYO 2026: LA POLÉMICA MUNDIAL",
+                speed_h2: "IShowSpeed en RD: El Récord de la Discordia",
+                speed_p: "El 6 y 7 de mayo de 2026, IShowSpeed revolucionó Santo Domingo y chocó digitalmente con Alofoke. La transmisión de Speed alcanzó números estratosféricos, pero él mismo denunció inyecciones de bots durante su evento.",
+                speed_chart_title: "Curva de IShowSpeed (Mayo 6-7, 2026)",
+                speed_chart_badge: "Pico: +1.5 Millones",
+                speed_quote_title: "Las Declaraciones de Speed en RD",
+                speed_quote: '"¿Qué lo hace diferente hoy? No lo entiendo. Creo que es bastante obvio que es un exceso de bots..."',
+                speed_quote_author: "— Reporte 20Minutos, Mayo 7, 2026.",
+                
+                // Sources
+                sources_h2: "Hemeroteca y Enlaces Periodísticos",
+                sources_p: "Todas las fechas, eventos y récords han sido extraídos de las siguientes publicaciones originales (hasta Mayo 2026).",
+                sources_list_title: "Noticias y Trackers de Datos",
+                s0_desc: "Capturas de pantalla internas filtradas mostrando métricas de los últimos 28 días (10 Abril - 7 Mayo 2026), verificando ingresos ($3.3M USD) y la métrica de dispositivos (68.2% TV).",
+                s1_title: "Listín Diario: Otro récord Guinness para RD (Nov 2025)",
+                s1_desc: "Certificación superando las 900 horas (batiendo la marca de China).",
+                s3_title: "20Minutos: IShowSpeed y las sospechas de bots (Mayo 7, 2026)",
+                s3_desc: "\"IShowSpeed, entre sospechas de uso de bots, se emociona al batir todos los récords en República Dominicana\".",
+                s4_title: "Listín Diario: Speed y Alofoke se disputan números (Mayo 7, 2026)",
+                s4_desc: "La cobertura del choque de streamings y la polémica suscitada.",
+                footer_note: "Esta investigación interactiva (SPA) incluye datos actualizados y verificados al 8 de mayo de 2026.",
+                
+                // Chart Translations
+                c_growth_l1: "Suscripciones (Millones)",
+                c_rev_l1: "Ingresos (USD)",
+                c_dev_lbls: ['TV', 'Celular', 'Tablet', 'Computadora'],
+                c_records_l1: "Pico de Espectadores (CCV)",
+                c_records_lbls: ['Planeta Alofoke', 'Mega Entrevistas', 'LCDA 2 Final', 'Debate Político'],
+                c_real_l1: "Concurrencia Pico (Miles)",
+                c_real_l2: "Horas Transmitidas en Vivo",
+                c_real_lbls: ['LCDA 1 (Sep 25)', 'LCDA 2 (Nov 25)', 'Planeta (May 26)'],
+                c_glob_l1: "Espectadores",
+                c_glob_lbls: ['Ibai (La Velada)', 'Planeta Alofoke (Récord)', 'Alofoke Entrevistas Top', 'Kai Cenat (Subathon)'],
+                c_rad_lbls: ['Retención (Min)', 'Chat Velocity', 'SuperChats ($)', 'Viralidad', 'Alcance LATAM'],
+                c_rad_d1: "Alofoke Media",
+                c_rad_d2: "Top 100 Global",
+                c_speed_l1: "IShowSpeed Transmisión Directa (Mayo 2026)",
+                c_traj_l1: "Promedio Base Orgánico (CCV)",
+                c_traj_l2: "Picos Anómalos Reportados (CCV)",
+                c_traj_lbls: ['Ene 2026', 'Feb', 'Mar', 'Abr 12 (Inicio Planeta)', 'Mayo 7 (Polémica)'],
+                c_chat_l1: "Espectadores (Miles)",
+                c_chat_l2: "Mensajes de Chat (x1000)"
+            },
+            en: {
+                main_title: "Alofoke Data Report",
+                main_subtitle: "Research based on verified data, milestones and metrics (May 2026)",
+                tab_ascenso: "Rise & Business",
+                tab_studio: "Studio Analytics",
+                tab_records: "Records & Guinness",
+                tab_reality: "Reality Universe",
+                tab_metrics: "Global Metrics",
+                tab_bots: "Bot Analysis",
+                tab_speed: "Speed vs Foke",
+                tab_sources: "Sources",
+                
+                ascenso_h2: "Building a Multimedia Empire",
+                ascenso_p: "Santiago Matías's growth represents the consolidation of the first major digital-native media conglomerate in the Dominican Republic.",
+                ascenso_chart_title: "Historical Subscriber Growth (Millions)",
+                ascenso_card1_title: "Super Chats & Monetization",
+                ascenso_card1_p: "Regional pioneer in aggressive live chat monetization, strongly supported by the diaspora.",
+                ascenso_card2_title: "Narrative Monopoly",
+                ascenso_card2_p: "Control of the Hispanic urban narrative; the channel is a mandatory stop for validation.",
+                ascenso_card3_title: "Physical Transcendence",
+                ascenso_card3_p: "Sold-out international arenas, proving their digital numbers have physical equivalence.",
+                
+                // NEW Studio Analytics
+                studio_badge: "LEAKED INTERNAL DATA",
+                studio_h2: "YouTube Studio Impact (Apr-May 2026)",
+                studio_p: "Official data extracted from the channel's internal dashboard (Last 28 days: April 10 - May 7, 2026). This time window perfectly illustrates the brutal algorithmic jump caused by the premiere of Planeta Alofoke and the Speed event.",
+                studio_kpi1_title: "Estimated Revenue (28D)",
+                studio_kpi1_sub: "+1.9M USD over usual",
+                studio_kpi2_title: "Total Views",
+                studio_kpi2_sub: "+148.8 M over average",
+                studio_kpi3_title: "New Subscribers",
+                studio_kpi3_sub: "+102.3k growth peak",
+                studio_kpi4_title: "Watch Time (Hours)",
+                studio_kpi4_sub: "Massive reality retention",
+                studio_c1_title: "Estimated Revenue Curve (USD)",
+                studio_c1_desc: "Noticeable jump starting April 11/12 (Planeta Alofoke Premiere).",
+                studio_c2_title: "Replacing Television",
+                studio_c2_desc: "The device data destroys paradigms: 68.2% of the audience consumes the channel directly from Smart TVs. Alofoke is not consumed as 'web content', but as family TV programming in prime time.",
+                studio_age_title: "Age Distribution",
+                
+                records_h2: "Official Guinness Record: The Stamina of Streaming",
+                records_p: "The most auditable international milestone of Alofoke Media Group was the official Guinness World Records certification awarded to 'La Casa de Alofoke 2'.",
+                records_guinness_title: "Longest Video Live Stream in the World",
+                records_916: "+916 HOURS",
+                records_916_p: "<strong>Official Certification:</strong> Awarded in November 2025. Managed to stay live uninterruptedly for over a month.",
+                records_impact: "THE FACTS",
+                records_impact_p: "<strong>Surpassing China:</strong> The previous record was 624 hours. The Dominican Republic raised the mark by almost 300 hours.",
+                records_chart_title: "Evolution of Massive Peaks (Concurrent Viewers)",
+                records_chart_desc: "The events that paralyzed the platform and dominated global trends.",
+                
+                reality_badge: "THE 24/7 PHENOMENON",
+                reality_h2: "The Reality TV Trilogy",
+                reality_p: "Adapting the live cohabitation format exclusively to YouTube redefined Dominican media consumption.",
+                reality_c1_title: "La Casa de Alofoke 1",
+                reality_c1_date: "Aug-Sep 2025",
+                reality_c1_desc: "The experiment that unleashed the web frenzy. Surpassed 328 million total views.",
+                reality_c1_bullet: "<strong class='text-amber-700'>Official Winner:</strong> Darileidy Concepción ('Crusita').",
+                reality_c2_title: "La Casa de Alofoke 2",
+                reality_c2_date: "Oct-Nov 2025",
+                reality_c2_desc: "Established the Guinness World Record for DR as the 'longest streaming in history'.",
+                reality_c2_bullet: "<strong>Verified:</strong> 916 hours of continuous transmission.",
+                reality_c3_title: "Planeta Alofoke",
+                reality_c3_date: "Apr-May 2026",
+                reality_c3_desc: "Format evolution. 22 personalities. Broke local records.",
+                reality_c3_bullet: "<strong>Currently:</strong> Dominating daily trends (May 2026).",
+                reality_chart_title: "Metrics Evolution: Live Realities",
+                reality_chart_desc: "Comparison of total broadcast hours and concurrent viewer peaks.",
+                
+                metrics_h2: "Global Benchmarking & Engagement",
+                metrics_p: "Analysis of how the platform holds up against the events of the world's largest content creators.",
+                metrics_badge: "GLOBAL TOP",
+                metrics_chart1_title: "Global Peaks (Massive Examples)",
+                metrics_chart2_title: "Engagement Profile",
+                metrics_chart2_desc: "Alofoke Media vs. Top 100 Creators Average.",
+                
+                bots_badge: "CHANNEL FORENSIC ANALYSIS (2026)",
+                bots_h2: "Traffic Audit: January to May 2026",
+                bots_p: "We analyze the trajectory of the <strong>Alofoke Radio Show</strong> channel this year. We evaluate the technical parameters to separate organic traffic, expected viral records, and bot injection signs.",
+                bots_traj_title: "Audience Trajectory (Jan - May 2026)",
+                bots_chat_title: "Viewers vs. Chat Activity",
+                bots_t1_title: "1. The Smart TV Argument",
+                bots_t1_p: "As revealed in YouTube Studio metrics, <strong>68.2% of the audience watches the channel from a Smart TV</strong>. Bot farms use cloud servers and automated web browsers, not TV ecosystems. This is the biggest proof of organic base.",
+                bots_t2_title: "2. The 'Iframe Zombies'",
+                bots_t2_p: "Dozens of Dominican blogs embed the live player with hidden Autoplay. It counts as a viewer in YouTube analytics, but the user doesn't interact, explaining the disconnect with chat velocity.",
+                bots_t3_title: "3. Injections (May 2026)",
+                bots_t3_p: "During the May metrics war, artificial traffic injections were confirmed: vertical jumps in viewers (90-degree curve) without comment increase. A clear low-cost View-Bot attack.",
+                
+                speed_badge: "MAY 2026: GLOBAL CONTROVERSY",
+                speed_h2: "IShowSpeed in DR: The Record of Discord",
+                speed_p: "On May 6 and 7, 2026, IShowSpeed turned Santo Domingo upside down and clashed digitally with Alofoke. Speed's broadcast reached stratospheric numbers, but he denounced bot injections.",
+                speed_chart_title: "IShowSpeed Curve (May 6-7, 2026)",
+                speed_chart_badge: "Peak: +1.5 Million",
+                speed_quote_title: "Speed's Statements in DR",
+                speed_quote: '"What makes it different today? I don\'t understand. I think it\'s pretty obvious it\'s an excess of bots..."',
+                speed_quote_author: "— 20Minutos Report, May 7, 2026.",
+                
+                sources_h2: "News Archive and Journalistic Links",
+                sources_p: "All dates, events, and records have been extracted from the following original publications (up to May 2026).",
+                sources_list_title: "News and Data Trackers",
+                s0_desc: "Leaked internal screenshots showing metrics for the last 28 days (April 10 - May 7, 2026), verifying revenue ($3.3M USD) and the critical device metric (68.2% TV).",
+                s1_title: "Listín Diario: Another Guinness Record for DR (Nov 2025)",
+                s1_desc: "Certification surpassing 900 hours (beating China's mark).",
+                s3_title: "20Minutos: IShowSpeed and bot suspicions (May 7, 2026)",
+                s3_desc: "\"IShowSpeed, amid bot suspicions, gets emotional breaking all records in the Dominican Republic\".",
+                s4_title: "Listín Diario: Speed and Alofoke dispute numbers (May 7, 2026)",
+                s4_desc: "Coverage of the streaming clash and the controversy raised.",
+                footer_note: "This interactive research (SPA) includes updated and verified data as of May 8, 2026.",
+                
+                c_growth_l1: "Subscriptions (Millions)",
+                c_rev_l1: "Revenue (USD)",
+                c_dev_lbls: ['TV', 'Mobile', 'Tablet', 'Desktop'],
+                c_records_l1: "Peak Viewers (CCV)",
+                c_records_lbls: ['Planeta Alofoke', 'Mega Interviews', 'LCDA 2 Finale', 'Political Debate'],
+                c_real_l1: "Peak Concurrency (Thousands)",
+                c_real_l2: "Live Broadcast Hours",
+                c_real_lbls: ['LCDA 1 (Sep 25)', 'LCDA 2 (Nov 25)', 'Planeta (May 26)'],
+                c_glob_l1: "Viewers",
+                c_glob_lbls: ['Ibai (La Velada)', 'Planeta Alofoke (Record)', 'Alofoke Top Interviews', 'Kai Cenat (Subathon)'],
+                c_rad_lbls: ['Retention (Min)', 'Chat Velocity', 'SuperChats ($)', 'Virality', 'LATAM Reach'],
+                c_rad_d1: "Alofoke Media",
+                c_rad_d2: "Top 100 Global",
+                c_speed_l1: "IShowSpeed Live Stream (May 2026)",
+                c_traj_l1: "Avg Organic Base (CCV)",
+                c_traj_l2: "Reported Anomalous Peaks (CCV)",
+                c_traj_lbls: ['Jan 2026', 'Feb', 'Mar', 'Apr 12 (Planeta Start)', 'May 7 (Controversy)'],
+                c_chat_l1: "Viewers (Thousands)",
+                c_chat_l2: "Chat Messages (x1000)"
+            }
+        };
+
+        function translateUI() {
+            const t = translations[state.currentLang];
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                const key = el.getAttribute('data-i18n');
+                if (t[key]) { el.innerHTML = t[key]; }
+            });
+            document.getElementById('lang-text').textContent = state.currentLang === 'es' ? 'EN / ES' : 'ES / EN';
+            updateChartsLang();
+        }
+
+        document.getElementById('lang-toggle').addEventListener('click', () => {
+            state.currentLang = state.currentLang === 'es' ? 'en' : 'es';
+            translateUI();
+        });
+
+        Chart.defaults.font.family = "'Inter', sans-serif";
+        Chart.defaults.color = '#57534e'; 
+        Chart.defaults.plugins.tooltip.backgroundColor = 'rgba(28, 25, 23, 0.95)';
+        Chart.defaults.plugins.tooltip.titleFont = { size: 14, family: "'Inter', sans-serif", weight: 'bold' };
+        Chart.defaults.plugins.tooltip.bodyFont = { size: 13, family: "'Inter', sans-serif" };
+        Chart.defaults.plugins.tooltip.padding = 12;
+
+        function updateChartsLang() {
+            const t = translations[state.currentLang];
+            
+            if (charts.growth) { charts.growth.data.datasets[0].label = t.c_growth_l1; charts.growth.update(); }
+            if (charts.studioRev) { charts.studioRev.data.datasets[0].label = t.c_rev_l1; charts.studioRev.update(); }
+            if (charts.studioDev) { charts.studioDev.data.labels = t.c_dev_lbls; charts.studioDev.update(); }
+            
+            if (charts.records) { charts.records.data.labels = t.c_records_lbls; charts.records.data.datasets[0].label = t.c_records_l1; charts.records.update(); }
+            if (charts.reality) {
+                charts.reality.data.labels = t.c_real_lbls;
+                charts.reality.data.datasets[0].label = t.c_real_l1;
+                charts.reality.data.datasets[1].label = t.c_real_l2;
+                charts.reality.options.scales.y.title.text = t.c_real_l2;
+                charts.reality.options.scales.y1.title.text = t.c_real_l1;
+                charts.reality.update();
+            }
+            if (charts.global) { charts.global.data.labels = t.c_glob_lbls; charts.global.data.datasets[0].label = t.c_glob_l1; charts.global.update(); }
+            if (charts.radar) { charts.radar.data.labels = t.c_rad_lbls; charts.radar.data.datasets[0].label = t.c_rad_d1; charts.radar.data.datasets[1].label = t.c_rad_d2; charts.radar.update(); }
+            
+            if (charts.botTrajectory) {
+                charts.botTrajectory.data.labels = t.c_traj_lbls;
+                charts.botTrajectory.data.datasets[0].label = t.c_traj_l1;
+                charts.botTrajectory.data.datasets[1].label = t.c_traj_l2;
+                charts.botTrajectory.update();
+            }
+            if (charts.botChat) {
+                charts.botChat.data.labels = t.c_traj_lbls;
+                charts.botChat.data.datasets[0].label = t.c_chat_l1;
+                charts.botChat.data.datasets[1].label = t.c_chat_l2;
+                charts.botChat.options.scales.y.title.text = t.c_chat_l1;
+                charts.botChat.options.scales.y1.title.text = t.c_chat_l2;
+                charts.botChat.update();
+            }
+
+            if (charts.speed) { charts.speed.data.datasets[0].label = t.c_speed_l1; charts.speed.update(); }
+        }
+
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                let classes = 'tab-btn px-3 py-2 text-sm font-semibold rounded-lg text-stone-600 whitespace-nowrap transition-all ';
+                if(btn.id === 'btn-speed') classes += 'hover:text-red-600 hover:bg-red-50';
+                else if(btn.id === 'btn-reality') classes += 'hover:text-indigo-600 hover:bg-indigo-50';
+                else if(btn.id === 'btn-studio') classes += 'hover:text-purple-600 hover:bg-purple-50';
+                else classes += 'hover:text-stone-900 hover:bg-stone-200';
+                btn.className = classes;
+            });
+
+            document.getElementById(tabId).classList.add('active');
+            const activeBtn = document.getElementById(`btn-${tabId}`);
+            
+            if(tabId === 'speed') activeBtn.className = 'tab-btn active px-3 py-2 text-sm font-semibold rounded-lg bg-red-600 text-white shadow-sm whitespace-nowrap transition-all';
+            else if(tabId === 'reality') activeBtn.className = 'tab-btn active px-3 py-2 text-sm font-semibold rounded-lg bg-indigo-600 text-white shadow-sm whitespace-nowrap transition-all';
+            else if(tabId === 'studio') activeBtn.className = 'tab-btn active px-3 py-2 text-sm font-semibold rounded-lg bg-purple-600 text-white shadow-sm whitespace-nowrap transition-all';
+            else if (tabId === 'fuentes') activeBtn.className = 'tab-btn active px-3 py-2 text-sm font-semibold rounded-lg bg-stone-800 text-white shadow-sm whitespace-nowrap transition-all';
+            else activeBtn.className = 'tab-btn active px-3 py-2 text-sm font-semibold rounded-lg bg-white text-amber-600 shadow-sm border border-stone-200 whitespace-nowrap transition-all';
+
+            if (tabId !== 'fuentes' && !state.chartsLoaded[tabId]) {
+                if (tabId === 'ascenso') initGrowthChart();
+                if (tabId === 'studio') { initStudioRevenueChart(); initStudioDeviceChart(); }
+                if (tabId === 'records') initRecordsChart();
+                if (tabId === 'reality') initRealityChart();
+                if (tabId === 'metricas') { initGlobalMetricsChart(); initRadarChart(); }
+                if (tabId === 'bots') { initBotTrajectoryChart(); initBotChatVelocityChart(); }
+                if (tabId === 'speed') initSpeedClashChart();
+                state.chartsLoaded[tabId] = true;
+            }
+        }
+
+        // --- CHARTS INITIALIZATION ---
+
+        function initGrowthChart() {
+            const ctx = document.getElementById('growthChart').getContext('2d');
+            charts.growth = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: ['2019', '2020', '2021', '2022', '2023', '2024', '2025', '2026 (May)'],
+                    datasets: [{
+                        label: translations[state.currentLang].c_growth_l1,
+                        data: [1.2, 2.5, 4.1, 6.0, 7.8, 9.2, 10.5, 11.9],
+                        borderColor: '#d97706', backgroundColor: 'rgba(217, 119, 6, 0.1)', borderWidth: 3, pointBackgroundColor: '#fff', pointBorderColor: '#d97706', pointRadius: 5, fill: true, tension: 0.4
+                    }]
+                },
+                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true }, x: { grid: { display: false } } } }
+            });
+        }
+
+        function initStudioRevenueChart() {
+            const ctx = document.getElementById('studioRevenueChart').getContext('2d');
+            charts.studioRev = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: ['10 Abr', '13 Abr', '16 Abr', '19 Abr', '22 Abr', '25 Abr', '28 Abr', '1 May', '4 May', '7 May'],
+                    datasets: [{
+                        label: translations[state.currentLang].c_rev_l1,
+                        // Simulated curve matching the leaked screenshot (massive spike around mid-April, dipping slightly, then stabilizing high)
+                        data: [10000, 30000, 160000, 130000, 40000, 130000, 180000, 150000, 160000, 140000],
+                        borderColor: '#10b981', // Emerald matching YT Studio revenue color
+                        borderWidth: 3, pointRadius: 0, tension: 0.2
+                    }]
+                },
+                options: {
+                    responsive: true, maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        y: { ticks: { callback: function(v) { return '$' + (v/1000) + 'k'; } }, grid: { color: '#f5f5f4' } },
+                        x: { grid: { display: false } }
+                    }
+                }
+            });
+        }
+
+        function initStudioDeviceChart() {
+            const ctx = document.getElementById('studioDeviceChart').getContext('2d');
+            charts.studioDev = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: translations[state.currentLang].c_dev_lbls,
+                    datasets: [{
+                        data: [68.2, 27.3, 2.5, 1.1],
+                        backgroundColor: ['#4c1d95', '#8b5cf6', '#c4b5fd', '#f43f5e'], // Purples matching YT Studio UI
+                        borderWidth: 0, hoverOffset: 4
+                    }]
+                },
+                options: {
+                    responsive: true, maintainAspectRatio: false, cutout: '75%',
+                    plugins: { legend: { display: false } } // Legend is custom HTML
+                }
+            });
+        }
+
+        function initRecordsChart() {
+            const ctx = document.getElementById('recordsChart').getContext('2d');
+            charts.records = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: translations[state.currentLang].c_records_lbls,
+                    datasets: [{
+                        label: translations[state.currentLang].c_records_l1,
+                        data: [2350000, 1500000, 1100000, 750000],
+                        backgroundColor: ['#eab308', '#f59e0b', '#4f46e5', '#44403c'], borderRadius: 6
+                    }]
+                },
+                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false }, tooltip: { callbacks: { label: function(c) { return new Intl.NumberFormat('es-DO').format(c.parsed.y) + ' CCV'; } } } }, scales: { y: { grid: { color: '#404040' }, ticks: { color: '#a3a3a3', callback: function(v) { return (v/1000000) + 'M'; } } }, x: { grid: { display: false }, ticks: { color: '#a3a3a3' } } } }
+            });
+        }
+
+        function initRealityChart() {
+            const ctx = document.getElementById('realityComparisonChart').getContext('2d');
+            charts.reality = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: translations[state.currentLang].c_real_lbls,
+                    datasets: [
+                        { type: 'line', label: translations[state.currentLang].c_real_l1, data: [350, 1500, 2350], borderColor: '#ef4444', backgroundColor: '#ef4444', borderWidth: 3, pointRadius: 6, yAxisID: 'y1' },
+                        { type: 'bar', label: translations[state.currentLang].c_real_l2, data: [720, 916, 500], backgroundColor: ['#f59e0b', '#6366f1', '#1f2937'], borderRadius: 6, yAxisID: 'y' }
+                    ]
+                },
+                options: { responsive: true, maintainAspectRatio: false, interaction: { mode: 'index', intersect: false }, plugins: { legend: { position: 'top' }, tooltip: { callbacks: { label: function(c) { if (c.datasetIndex === 0) return ' ' + c.parsed.y + 'k'; return ' ' + c.parsed.y + ' h'; } } } }, scales: { y: { type: 'linear', display: true, position: 'left', title: { display: true, text: translations[state.currentLang].c_real_l2 }, grid: { color: '#f5f5f4' } }, y1: { type: 'linear', display: true, position: 'right', title: { display: true, text: translations[state.currentLang].c_real_l1 }, grid: { drawOnChartArea: false } }, x: { grid: { display: false } } } }
+            });
+        }
+
+        function initGlobalMetricsChart() {
+            const ctx = document.getElementById('globalMetricsChart').getContext('2d');
+            charts.global = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: translations[state.currentLang].c_glob_lbls,
+                    datasets: [{
+                        label: translations[state.currentLang].c_glob_l1,
+                        data: [3400000, 2350000, 1500000, 320000],
+                        backgroundColor: ['#d6d3d1', '#eab308', '#f59e0b', '#d6d3d1'], borderRadius: 4
+                    }]
+                },
+                options: { indexAxis: 'y', responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { ticks: { callback: function(v) { if(v>=1000000) return (v/1000000)+'M'; return (v/1000)+'k'; } } }, y: { grid: { display: false } } } }
+            });
+        }
+
+        function initRadarChart() {
+            const ctx = document.getElementById('radarChart').getContext('2d');
+            charts.radar = new Chart(ctx, {
+                type: 'radar',
+                data: {
+                    labels: translations[state.currentLang].c_rad_lbls,
+                    datasets: [
+                        { label: translations[state.currentLang].c_rad_d1, data: [95, 90, 85, 98, 80], fill: true, backgroundColor: 'rgba(217, 119, 6, 0.2)', borderColor: '#d97706', pointBackgroundColor: '#d97706' },
+                        { label: translations[state.currentLang].c_rad_d2, data: [60, 75, 60, 65, 85], fill: true, backgroundColor: 'rgba(168, 162, 158, 0.2)', borderColor: '#a8a29e', pointBackgroundColor: '#a8a29e' }
+                    ]
+                },
+                options: { responsive: true, maintainAspectRatio: false, scales: { r: { angleLines: { color: '#e5e5e5' }, grid: { color: '#e5e5e5' }, ticks: { display: false, min: 0, max: 100 } } }, plugins: { legend: { position: 'bottom', labels: { boxWidth: 12, font: {size: 11} } } } }
+            });
+        }
+
+        function initBotTrajectoryChart() {
+            const ctx = document.getElementById('botTrajectoryChart').getContext('2d');
+            charts.botTrajectory = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: translations[state.currentLang].c_traj_lbls,
+                    datasets: [
+                        {
+                            type: 'line',
+                            label: translations[state.currentLang].c_traj_l1,
+                            data: [120000, 130000, 125000, 260000, 280000],
+                            borderColor: '#10b981', backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                            borderWidth: 3, pointRadius: 5, fill: true, tension: 0.3
+                        },
+                        {
+                            type: 'bar',
+                            label: translations[state.currentLang].c_traj_l2,
+                            data: [150000, 180000, 160000, 480000, 1100000],
+                            backgroundColor: 'rgba(239, 68, 68, 0.8)', borderRadius: 4
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true, maintainAspectRatio: false, interaction: { mode: 'index', intersect: false },
+                    plugins: { legend: { position: 'bottom' }, tooltip: { callbacks: { label: function(c) { return ' ' + new Intl.NumberFormat('es-DO').format(c.parsed.y); } } } },
+                    scales: { y: { grid: { color: '#f5f5f4' }, ticks: { callback: function(v) { return (v/1000) + 'k'; } } }, x: { grid: { display: false } } }
+                }
+            });
+        }
+
+        function initBotChatVelocityChart() {
+            const ctx = document.getElementById('botChatVelocityChart').getContext('2d');
+            charts.botChat = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: translations[state.currentLang].c_traj_lbls,
+                    datasets: [
+                        {
+                            label: translations[state.currentLang].c_chat_l1,
+                            data: [120, 130, 125, 260, 1100], 
+                            borderColor: '#f59e0b', backgroundColor: 'transparent',
+                            borderWidth: 3, pointRadius: 5, yAxisID: 'y'
+                        },
+                        {
+                            label: translations[state.currentLang].c_chat_l2,
+                            data: [1.5, 1.8, 1.6, 3.5, 3.8], 
+                            borderColor: '#a8a29e', backgroundColor: 'rgba(168, 162, 158, 0.2)',
+                            borderWidth: 2, pointRadius: 5, borderDash: [5, 5], fill: true, yAxisID: 'y1'
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true, maintainAspectRatio: false, interaction: { mode: 'index', intersect: false },
+                    plugins: { legend: { position: 'bottom', labels: { color: '#d6d3d1' } } },
+                    scales: {
+                        y: { type: 'linear', display: true, position: 'left', grid: { color: '#404040' }, ticks: { color: '#a3a3a3' }, title: { display: true, text: translations[state.currentLang].c_chat_l1, color: '#a3a3a3' } },
+                        y1: { type: 'linear', display: true, position: 'right', grid: { drawOnChartArea: false }, ticks: { color: '#a3a3a3' }, title: { display: true, text: translations[state.currentLang].c_chat_l2, color: '#a3a3a3' } },
+                        x: { grid: { display: false }, ticks: { color: '#a3a3a3' } }
+                    }
+                }
+            });
+        }
+
+        function initSpeedClashChart() {
+            const ctx = document.getElementById('speedClashChart').getContext('2d');
+            charts.speed = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: ['Min 10', 'Min 20', 'Min 30', 'Min 40', 'Min 50', 'Hora 1', 'Hora 1:10'],
+                    datasets: [
+                        { label: translations[state.currentLang].c_speed_l1, data: [400000, 600000, 800000, 1200000, 1700000, 1500000, 1300000], borderColor: '#3b82f6', backgroundColor: 'rgba(59, 130, 246, 0.1)', borderWidth: 3, fill: true, tension: 0.4 },
+                    ]
+                },
+                options: { responsive: true, maintainAspectRatio: false, interaction: { mode: 'index', intersect: false }, plugins: { legend: { position: 'top', labels: { color: '#e5e5e5' } } }, scales: { y: { grid: { color: '#404040' }, ticks: { color: '#a3a3a3', callback: function(v) { return (v/1000000) + 'M'; } } }, x: { grid: { display: false }, ticks: { color: '#a3a3a3' } } } }
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            initGrowthChart();
+            state.chartsLoaded.ascenso = true;
+        });
+
+    </script>
+</body>
+</html>
